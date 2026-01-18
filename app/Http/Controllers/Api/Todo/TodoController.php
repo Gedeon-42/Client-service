@@ -20,7 +20,7 @@ class TodoController extends Controller
             'user_id' => Auth::id(),
         ];
 
-        $response = Http::post(config('services.todo.url').'/todos', $payload);
+        $response = Http::post(config('services.todo.base_url').'/todos', $payload);
 
         return response()->json(
             $response->json(),
