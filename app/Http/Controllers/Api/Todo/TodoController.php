@@ -2,8 +2,6 @@
 
 namespace App\Http\Controllers\Api\Todo;
 
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
@@ -14,53 +12,39 @@ use App\Services\TodoService;
 class TodoController extends Controller
 {
 
-public function __construct( protected TodoService $todoService)
+    public function __construct(protected TodoService $todoService)
     {
         //
     }
     //
     public function index()
     {
-        $response = Http::get(
-            config('services.todo.base_url') . '/todos',
-            [
-                'user_id' => auth()->id(),
-            ]
-        );
-
-        return response()->json(
-            $response->json(),
-        );
+        $userId = Auth::id();
+        $response = $this->todoService->getUserTodos($userId);
+        return response()->json($response->json(), $response->status());
     }
-
-
 
     public function store(StoreRequest $request)
     {
-
         $payload = [
             'title' => $request->title,
             'description' => $request->description,
             'user_id' => Auth::id(),
         ];
 
-
-
         $response = $this->todoService->createTodo($payload);
-
         return response()->json($response->json(), $response->status());
     }
 
 
     public function update(UpdateTodoRequest $request, $id)
     {
-      $payload = array_merge(
-        $request->validated(),
-        [
-            'user_id' => Auth::id(), 
-        ]
-    );
-
+        $payload = array_merge(
+            $request->validated(),
+            [
+                'user_id' => Auth::id(),
+            ]
+        );
         $response = $this->todoService->updateTodo($id, $payload);
 
         return response()->json($response->json(), $response->status());
