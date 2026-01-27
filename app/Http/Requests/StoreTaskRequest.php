@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Requests\Auth;
+namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class LoginRequest extends FormRequest
+class StoreTaskRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -14,7 +14,6 @@ class LoginRequest extends FormRequest
         return true;
     }
 
-    
     /**
      * Get the validation rules that apply to the request.
      *
@@ -24,8 +23,9 @@ class LoginRequest extends FormRequest
     {
         return [
             //
-            'email' => 'required|email',
-            'password' => 'required',
+            'title'=>'required',
+            'description'=>'nullable|',
+            'due_date'=>'required'
         ];
     }
 }

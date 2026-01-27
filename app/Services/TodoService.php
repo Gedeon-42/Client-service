@@ -9,7 +9,6 @@ use Illuminate\Support\Facades\Http;
 class TodoService
 {
     protected $baseUrl;
-
     public function getUserTodos($userId)
     {
         $response = Http::get(
@@ -19,7 +18,9 @@ class TodoService
             ]
         );
 
-        return $response;
+        if ($response->failed()) {
+            throw new GeneralException($response->json('message'), $response->status());
+        }
     }
 
     public function createTodo($payload)
@@ -33,7 +34,6 @@ class TodoService
             //  dd($response->json('message'));
             throw new GeneralException($response->json('message'), $response->status());
         }
-        return $response;
     }
     public function updateTodo($id, $payload)
     {
@@ -41,11 +41,6 @@ class TodoService
 
         if ($response->failed()) {
             throw new \Exception('Failed to update todo');
-            return response()->json([
-                'message' => 'Todo service error',
-                'error' => $response->json()
-            ], 502);
         }
-        return $response;
     }
 }
