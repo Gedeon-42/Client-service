@@ -1,111 +1,85 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api;
 
-use App\Exceptions\GeneralException;
 use App\Models\Task;
 use Illuminate\Http\Request;
-use App\Http\Requests\StoreTaskRequest;
+use App\Services\TaskService;
+use App\Http\Controllers\Controller;
 use App\Http\Resources\TaskResource;
-use Carbon\Carbon;
-use Illuminate\Support\Facades\Auth;
+use App\Http\Resources\StatsResource;
+use App\Http\Requests\StoreTaskRequest;
+use App\Http\Requests\UpdateTaskRequest;
 
 class TaskController extends Controller
 {
-    //
-    public function index(){
+    public function __construct(protected TaskService $service)
+    {
 
     }
-
-    public function filterTask(Request $request)
+    public function store(StoreTaskRequest $request)
     {
-        $tasks = Task::where('user_id', auth()->id())
-            ->when($request->filled('status'), function ($query) use ($request) {
-
-                match ($request->status) {
-                    'active' => $query->where('is_completed', false),
-                    'completed' => $query->where('is_completed', true),
-                    default => null,
-                };
-            })
-            ->get();
-
-        return TaskResource::collection($tasks);
+        $task = $this->service->create($request->validated(), $request->user()->id);
+        return new TaskResource($task);
+    }
+    public function index(Request $request)
+    {
+        $tasks = $this->service->getAll($request,[
+            'due_date'=>$request->query('due_date'),
+            'status'=>$request->query('status'),
+            'search'=>$request->query('search')
+        ]);
+        $stats = $this->service->getStats($request->user()->id);
+        return response()->json([
+            'data' => TaskResource::collection($tasks),
+            // 'stats' => new StatsResource($stats)
+        ]);
     }
 
-
-
-    public function filterBydueDate(Request $request)
+    public function show(Task $task)
     {
-        $tasks = Task::where('user_id', auth()->id())
-            ->when($request->query('due_date'), function ($query, $filter) {
+        $this->authorize('view', $task);
+        return new TaskResource($this->service->view($task));
+    }
 
-                match ($filter) {
-                    'today' => $query->whereDate('due_date', Carbon::today()),
+    public function update(UpdateTaskRequest $updated, Task $task)
+    {
+        $this->authorize('update', $task);
+        $updatedTask = $this->service->update($task, $updated->validated());
+        return new TaskResource($updatedTask);
+    }
 
-                    'tomorrow' => $query->whereDate('due_date', Carbon::tomorrow()),
+    public function delete(Task $task)
+    {
+        $this->authorize('delete', $task);
+        $this->service->delete($task);
+        return response()->json([
+            'message' => 'task deleted successfully'
+        ]);
+    }
 
-                    'this_week' => $query->whereBetween('due_date', [
-                        Carbon::now()->startOfWeek(),
-                        Carbon::now()->endOfWeek(),
-                    ]),
-
-                    'next_week' => $query->whereBetween('due_date', [
-                        Carbon::now()->addWeek()->startOfWeek(),
-                        Carbon::now()->addWeek()->endOfWeek(),
-                    ]),
-
-                    default => null,
-                };
-            })
-            ->get();
+    
+     public function filterBydueDate(Request $request)
+    {
+        $tasks = $this->service->filterByDueDate(
+            auth()->id(),
+            $request->query('due_date')
+        );
 
         return response()->json($tasks);
     }
 
-    public function getStatistics(Request $request)
+
+
+     public function filterByStatus(Request $request)
     {
 
-        $totalActiveTask = Task::where('user_id', auth()->id())
-        ->where('is_completed',false)->count();
-        $totalCompletedTask = Task::where('user_id', auth()->id())
-        ->where('is_completed',true)->count();
-        return response()->json([
-            'totalActiveTask'=>$totalActiveTask,
-            'totalCompletedTask'=>$totalCompletedTask
-        ]);
+        $tasks = $this->service->filterByStatus(
+            auth()->id(),
+            $request->query('status')
+        );
+
+        return response()->json($tasks);
     }
 
-    public function store(StoreTaskRequest $request)
-    {
-
-        $user = Auth::user();
-        $data = $request->validated();
-        $task = Task::create([
-            'title' => $data['title'],
-            'user_id' => $user->id,
-            'description' => $data['description'],
-            'due_date' => $data['due_date']
-        ]);
-
-        return new TaskResource($task);
-    }
-
-    public function markCompleted(Task $task)
-    {
-        if ($task->is_completed == Task::TASK_COMPLETED) {
-            throw new GeneralException('Task is always completed', 401);
-        }
-        $task->update([
-            'is_completed' => Task::TASK_COMPLETED,
-            'completed_at' => now()
-        ]);
-        return response()->json([
-            'task' => $task
-        ]);
-    }
-
-    public function show(){
-        
-    }
 }

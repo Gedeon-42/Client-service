@@ -22,8 +22,7 @@ Route::post('/register', [AuthController::class, 'register']);
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('/todos', TodoController::class);
-     Route::get('/task',[TaskController::class,'filterTask']);
-    Route::get('/tasks/filter',[TaskController::class,'filterBydueDate']);
+     
     Route::get('/task/statistics',[TaskController::class,'getStatistics']);
     Route::post('/tasks/{task}/complete',[TaskController::class,'markCompleted']);
      Route::apiResource('/tasks', TaskController::class);
