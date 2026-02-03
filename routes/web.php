@@ -19,4 +19,4 @@ Route::get('/', function () {
 });
 
 Route::get('/login/murugo',[MurugoController::class,'redirectToMurugo'])->name('murugo.login');
-Route::get('/murugo/redirect',[MurugoController::class,'redirectToMurugo'])->name('murugo.redirect');
+Route::get('/murugo/callback',[MurugoController::class,'murugoCallback'])->name('murugo.callback');
