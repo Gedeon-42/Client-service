@@ -2,8 +2,9 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\TaskController;
+use App\Http\Controllers\MurugoController;
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\TaskController;
 use App\Http\Controllers\Api\Todo\TodoController;
 
 /*
@@ -19,6 +20,9 @@ use App\Http\Controllers\Api\Todo\TodoController;
 
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/register', [AuthController::class, 'register']);
+
+Route::get('/login/murugo',[MurugoController::class,'redirectToMurugo'])->name('murugo.login');
+Route::get('/murugo/redirect',[MurugoController::class,'redirectToMurugo'])->name('murugo.redirect');
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('/todos', TodoController::class);

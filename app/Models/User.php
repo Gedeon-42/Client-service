@@ -6,12 +6,13 @@ namespace App\Models;
 use App\Models\Task;
 use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Notifications\Notifiable;
+use RwandaBuild\MurugoAuth\Traits\MurugoAuthHelper;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
 class User extends Authenticatable
 {
-    use HasApiTokens, HasFactory, Notifiable;
+    use HasApiTokens, HasFactory, Notifiable,MurugoAuthHelper;
 
     /**
      * The attributes that are mass assignable.

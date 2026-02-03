@@ -38,6 +38,7 @@ class AuthController extends Controller
             return response()->json(['message' => 'Email Address not found']);
         }
 
+        
         $passwordMatches = Hash::check($credentials['password'], $user->password);
         if (!$passwordMatches) {
             return response()->json([

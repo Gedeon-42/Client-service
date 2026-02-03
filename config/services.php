@@ -34,4 +34,11 @@ return [
      'todo' => [
         'base_url' => env('TODO_SERVICE_URL'),
     ],
+        'murugo' => [
+        'client_id' => env('MURUGO_CLIENT_ID'),
+        'client_secret' => env('MURUGO_CLIENT_SECRET'),
+        'redirect' => env('APP_REDIRECT_URL', 'YOUR LOGIN REDIRECT URL'),
+        'murugo_url' => env('MURUGO_URL', 'MURUGO_URL'),
+        'murugo_app_key' => env('MURUGO_APP_KEY'),
+    ],
 ];
