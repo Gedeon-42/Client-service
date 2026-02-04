@@ -4,7 +4,7 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use App\Models\Task;
-use Laravel\Sanctum\HasApiTokens;
+use Laravel\Passport\HasApiTokens;
 use Illuminate\Notifications\Notifiable;
 use RwandaBuild\MurugoAuth\Traits\MurugoAuthHelper;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
