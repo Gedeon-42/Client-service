@@ -8,12 +8,14 @@ use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
 use App\Actions\GetPrivateDataAction;
+use Exception;
+use Illuminate\Validation\Rules\Exists;
 use RwandaBuild\MurugoAuth\Facades\MurugoAuth;
 
 class MurugoService
 {
 
-    public function __construct(protected GetPrivateDataAction $get_private_data_action) {}
+    public function __construct(protected GetPrivateDataAction $getPrivateDataAction) {}
 
 
     public function loginWithMurugo(array $data)
@@ -27,6 +29,7 @@ class MurugoService
         $murugoUser = MurugoAuth::userFromToken($tokens);
         $user = $murugoUser->user;
 
+        // dd($murugoUser);
         if (!$user) {
             $credentials =  Http::post('https://test.murugocloud.com/oauth/token', [
                 'grant_type' => 'client_credentials',
@@ -34,21 +37,34 @@ class MurugoService
                 'client_secret' => config('services.murugo.client_secret'),
                 'scope' => ''
             ]);
-            //   dd($credentials['access_token']);
+            //   dd($credentials);
             $token = $credentials['access_token'];
-            $userData = $this->get_private_data_action->handle($token, $murugoUser->name)->json();
+            $userData = $this->getPrivateDataAction->handle($token, $murugoUser->name)->json();
             //  dd($userData);
-            $user = User::firstOrCreate(
-                ['murugo_user_id' => $murugoUser->id],
-                [
-                    'email' => $userData['email'] ?? null,
-                    'name' => $murugoUser->name ?? 'User',
-                ]
-            );
+
+            $existingUser = User::where('email', $userData['email'])->first();
+
+            if ($existingUser) {
+                $existingUser->update([
+                    'murugo_user_id' => $murugoUser->id,
+                ]);
+                $user = $existingUser;
+            } else {
+                $newuser = User::firstOrCreate(
+                    ['murugo_user_id' => $murugoUser->id],
+                    [
+                        'email' => $userData['email'] ?? null,
+                        'name' => $murugoUser->name ?? 'User',
+                    ]
+                );
+                $user = $newuser;
+            }
         }
         $token = $user->createToken("auth_token")->accessToken;
         return compact('user', 'token');
     }
+
+
 
     public function callback()
     {
