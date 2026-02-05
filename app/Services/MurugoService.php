@@ -2,14 +2,20 @@
 
 namespace App\Services;
 
+use PSpell\Config;
+
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
-use PSpell\Config;
+use App\Actions\GetPrivateDataAction;
 use RwandaBuild\MurugoAuth\Facades\MurugoAuth;
 
 class MurugoService
 {
+
+    public function __construct(protected GetPrivateDataAction $get_private_data_action) {}
+
+
     public function loginWithMurugo(array $data)
     {
         $tokens = [
@@ -18,12 +24,10 @@ class MurugoService
             'expires_in' => $data['expires_in'],
         ];
 
-
         $murugoUser = MurugoAuth::userFromToken($tokens);
         $user = $murugoUser->user;
-        // dd($murugoUser);
+
         if (!$user) {
-            //
             $credentials =  Http::post('https://test.murugocloud.com/oauth/token', [
                 'grant_type' => 'client_credentials',
                 'client_id' => config('services.murugo.client_id'),
@@ -32,14 +36,8 @@ class MurugoService
             ]);
             //   dd($credentials['access_token']);
             $token = $credentials['access_token'];
-            $userDataResponse = Http::withHeaders([
-                'APPKEY' => config('services.murugo.murugo_app_key')
-            ])->withToken($token)->get('https://test.murugocloud.com/api/user/get-private-data', [
-                'atname' => $murugoUser->name
-            ]);
-
-            // dd($userDataResponse->json());
-            $userData = $userDataResponse->json();
+            $userData = $this->get_private_data_action->handle($token, $murugoUser->name)->json();
+            //  dd($userData);
             $user = User::firstOrCreate(
                 ['murugo_user_id' => $murugoUser->id],
                 [
