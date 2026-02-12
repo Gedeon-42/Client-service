@@ -17,7 +17,6 @@ class MurugoService
 
     public function __construct(protected GetPrivateDataAction $getPrivateDataAction) {}
 
-
     public function loginWithMurugo(array $data)
     {
         $tokens = [
@@ -31,16 +30,19 @@ class MurugoService
 
         // dd($murugoUser);
         if (!$user) {
-            $credentials =  Http::post('https://test.murugocloud.com/oauth/token', [
+            $credentials =  Http::post(config('services.murugo.murugo_url') . '/oauth/token', [
                 'grant_type' => 'client_credentials',
                 'client_id' => config('services.murugo.client_id'),
                 'client_secret' => config('services.murugo.client_secret'),
                 'scope' => ''
             ]);
+
+            if ($credentials->failed()) {
+                throw new Exception('Failed to get access token from Murugo');
+            }
             //   dd($credentials);
             $token = $credentials['access_token'];
             $userData = $this->getPrivateDataAction->handle($token, $murugoUser->name)->json();
-            //  dd($userData);
 
             $existingUser = User::where('email', $userData['email'])->first();
 

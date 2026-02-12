@@ -12,7 +12,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 
 class User extends Authenticatable
 {
-    use HasApiTokens, HasFactory, Notifiable,MurugoAuthHelper;
+    use HasApiTokens, HasFactory, Notifiable, MurugoAuthHelper;
 
     /**
      * The attributes that are mass assignable.
@@ -46,7 +46,15 @@ class User extends Authenticatable
         'password' => 'hashed',
     ];
 
-    public function tasks(){
+    public function routeNotificationForOneSignal()
+    {
+        return [
+            'include_external_user_ids' => [(string) $this->id],
+        ];
+    }
+
+    public function tasks()
+    {
         return $this->hasMany(Task::class);
     }
 }

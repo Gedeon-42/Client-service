@@ -7,6 +7,7 @@ use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\TaskController;
 use App\Http\Controllers\Api\MurugoController;
 use App\Http\Controllers\Api\Todo\TodoController;
+use App\Http\Controllers\NotificationController;
 
 /*
 |--------------------------------------------------------------------------
@@ -25,6 +26,8 @@ Route::post('/register', [AuthController::class, 'register']);
 Route::get('/login/murugo',[MurugoController::class,'redirectToMurugo'])->name('murugo.login');
 Route::get('/murugo/redirect',[MurugoController::class,'redirectToMurugo'])->name('murugo.redirect');
 Route::post('/authenticate-user', [MurugoController::class, 'loginWithMurugo']);
+
+Route::post('/send-notification',[NotificationController::class,'sendNotification']);
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('/todos', TodoController::class);

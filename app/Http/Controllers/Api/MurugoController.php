@@ -31,6 +31,7 @@ class MurugoController extends Controller
         ]);
     }
 
+    
     public function loginWithEmail(Request $request)
     {
 

@@ -31,15 +31,21 @@ return [
         'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
     ],
 
-     'todo' => [
+    'todo' => [
         'base_url' => env('TODO_SERVICE_URL'),
     ],
-        'murugo' => [
+    'murugo' => [
         'client_id' => env('MURUGO_CLIENT_ID'),
         'client_secret' => env('MURUGO_CLIENT_SECRET'),
         'redirect' => env('APP_REDIRECT_URL', 'YOUR LOGIN REDIRECT URL'),
         'murugo_url' => env('MURUGO_URL', 'MURUGO_URL'),
         'murugo_app_key' => env('MURUGO_APP_KEY'),
         'disable_user_session' => true,
+    ],
+
+    'onesignal' => [
+        'app_id' => env('ONESIGNAL_APP_ID'),
+        'rest_api_key' => env('ONESIGNAL_REST_API_KEY'),
+        'guzzle_client_timeout' => env('ONESIGNAL_GUZZLE_CLIENT_TIMEOUT', 0),
     ],
 ];
