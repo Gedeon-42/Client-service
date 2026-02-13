@@ -6,7 +6,6 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Notification;
 use NotificationChannels\OneSignal\OneSignalChannel;
 use NotificationChannels\OneSignal\OneSignalMessage;
-use NotificationChannels\OneSignal\OneSignalWebButton;
 
 class SendTaskReminder extends Notification
 {
@@ -15,7 +14,7 @@ class SendTaskReminder extends Notification
     /**
      * Create a new notification instance.
      */
-    public function __construct()
+    public function __construct(public $task, public $favoriteChanel = null)
     {
         //
     }
@@ -27,19 +26,24 @@ class SendTaskReminder extends Notification
      */
     public function via(object $notifiable): array
     {
-        return [OneSignalChannel::class];
+        if ($this->favoriteChanel) return [$this->favoriteChanel];
+
+        return [OneSignalChannel::class, 'database'];
     }
 
+
+    
     /**
      * Get the mail representation of the notification.
      */
     public function toOneSignal(object $notifiable)
     {
         return OneSignalMessage::create()
-            ->setSubject("Task Reminder")
-            ->setBody("Task due Reminder")
-            ->setUrl("/");
+            ->setSubject("Task Due Reminder for {$this->task->title}")
+            ->setBody("
+                {$this->task->due_date}");
     }
+
     /**
      * Get the array representation of the notification.
      *

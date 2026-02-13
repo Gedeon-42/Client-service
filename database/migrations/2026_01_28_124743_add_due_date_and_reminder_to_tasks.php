@@ -12,8 +12,6 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('tasks', function (Blueprint $table) {
-            $table->boolean('reminder_enabled')->default(false);
-            $table->enum('reminder_before', ['1_hour', '1_day'])->nullable();
             $table->timestamp('reminder_sent_at')->nullable();
         });
     }
@@ -26,8 +24,6 @@ return new class extends Migration
     {
         Schema::table('tasks', function (Blueprint $table) {
             //
-            $table->dropColumn('reminder_enabled');
-            $table->dropColumn('reminder_time');
             $table->dropColumn('reminder_sent_at');
 
         });

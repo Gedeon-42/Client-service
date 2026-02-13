@@ -1,13 +1,12 @@
 <?php
 
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Route;
-
 use App\Http\Controllers\Api\AuthController;
-use App\Http\Controllers\Api\TaskController;
+
 use App\Http\Controllers\Api\MurugoController;
 use App\Http\Controllers\Api\Todo\TodoController;
 use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\TaskController;
+use Illuminate\Support\Facades\Route;
 
 /*
 |--------------------------------------------------------------------------
@@ -33,7 +32,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('/todos', TodoController::class);
     Route::get('/task/statistics',[TaskController::class,'getStatistics']);
     Route::post('/tasks/{task}/complete',[TaskController::class,'markCompleted']);
-     Route::apiResource('/tasks', TaskController::class);
+ Route::apiResource('/tasks', TaskController::class);
    
 });
-
+    

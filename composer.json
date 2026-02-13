@@ -12,7 +12,8 @@
         "laravel/passport": "^12.4",
         "laravel/sanctum": "^3.3",
         "laravel/tinker": "^2.8",
-        "rwandabuild/murugo_api_auth": "^2.6"
+        "rwandabuild/murugo_api_auth": "^2.6",
+        "sentry/sentry-laravel": "^4.20"
     },
     "require-dev": {
         "fakerphp/faker": "^1.9.1",

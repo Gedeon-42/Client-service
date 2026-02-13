@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Api;
+namespace App\Http\Controllers;
 
 use App\Models\Task;
 use Illuminate\Http\Request;
@@ -13,10 +13,7 @@ use App\Http\Requests\UpdateTaskRequest;
 
 class TaskController extends Controller
 {
-    public function __construct(protected TaskService $service)
-    {
-
-    }
+    public function __construct(protected TaskService $service) {}
     public function store(StoreTaskRequest $request)
     {
         $task = $this->service->create($request->validated(), $request->user()->id);
@@ -24,10 +21,10 @@ class TaskController extends Controller
     }
     public function index(Request $request)
     {
-        $tasks = $this->service->getAll($request,[
-            'due_date'=>$request->query('due_date'),
-            'status'=>$request->query('status'),
-            'search'=>$request->query('search')
+        $tasks = $this->service->getAll($request, [
+            'due_date' => $request->query('due_date'),
+            'status' => $request->query('status'),
+            'search' => $request->query('search')
         ]);
         $stats = $this->service->getStats($request->user()->id);
         return response()->json([
@@ -58,8 +55,8 @@ class TaskController extends Controller
         ]);
     }
 
-    
-     public function filterBydueDate(Request $request)
+
+    public function filterBydueDate(Request $request)
     {
         $tasks = $this->service->filterByDueDate(
             auth()->id(),
@@ -71,7 +68,7 @@ class TaskController extends Controller
 
 
 
-     public function filterByStatus(Request $request)
+    public function filterByStatus(Request $request)
     {
 
         $tasks = $this->service->filterByStatus(
@@ -81,5 +78,4 @@ class TaskController extends Controller
 
         return response()->json($tasks);
     }
-
 }

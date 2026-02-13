@@ -3,9 +3,8 @@
 namespace App\Console\Commands;
 
 use App\Models\Task;
-use App\Jobs\SendReminder;
+use App\Notifications\SendTaskReminder;
 use Illuminate\Console\Command;
-use App\Notifications\TaskTracker;
 
 class TaskReminder extends Command
 {
@@ -47,8 +46,8 @@ class TaskReminder extends Command
                 $remindAt = $task->due_date->copy()->subDay();
             }
             if ($now->greaterThanOrEqualTo($remindAt)) {
-                // $task->user->notify(new TaskDueReminder($task));
-                SendReminder::dispatch($task);
+                $task->user->notify(new SendTaskReminder($task));
+                // SendReminder::dispatch($task);
                 $task->update([
                     'reminder_sent_at' => now(),
                 ]);
