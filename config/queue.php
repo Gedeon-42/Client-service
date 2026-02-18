@@ -61,7 +61,6 @@ return [
             'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
             'after_commit' => false,
         ],
-
         'redis' => [
             'driver' => 'redis',
             'connection' => 'default',

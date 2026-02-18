@@ -20,4 +20,6 @@ class GeneralException extends Exception
             'status' => $this->status,
         ], $this->status);
     }
+
+    
 }
