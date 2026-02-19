@@ -24,6 +24,7 @@ class TodoController extends Controller
         return response()->json($response->json(), $response->status());
     }
 
+    
     public function store(StoreRequest $request)
     {
         $payload = [

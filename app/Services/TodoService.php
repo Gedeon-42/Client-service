@@ -3,7 +3,6 @@
 namespace App\Services;
 
 use App\Exceptions\GeneralException;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Http;
 
 class TodoService
