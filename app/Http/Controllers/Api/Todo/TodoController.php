@@ -16,7 +16,7 @@ class TodoController extends Controller
     {
         //
     }
-    //
+    
     public function index()
     {
         $userId = Auth::id();
@@ -24,7 +24,6 @@ class TodoController extends Controller
         return response()->json($response->json(), $response->status());
     }
 
-    
     public function store(StoreRequest $request)
     {
         $payload = [

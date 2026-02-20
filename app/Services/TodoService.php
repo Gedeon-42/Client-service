@@ -34,6 +34,7 @@ class TodoService
             throw new GeneralException($response->json('message'), $response->status());
         }
     }
+
     public function updateTodo($id, $payload)
     {
         $response = Http::put("{$this->baseUrl}/todos/{$id}", $payload);
